@@ -3,28 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Game Portal</title>
 
   <style>
-    /* =============================================
-       RESET & VARIÁVEIS GLOBAIS
-    ============================================= */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      /* Paleta principal — altere aqui para mudar todo o tema */
-      --bg-page:    #0f172a;  /* fundo da página */
-      --bg-card:    #1e293b;  /* fundo dos cards */
-      --neon:       #38bdf8;  /* cor neon azul (bordas e brilho) */
-      --neon-glow:  rgba(56, 189, 248, 0.45);
-      --text-main:  #e2e8f0;
-      --text-muted: #94a3b8;
-      --header-h:   60px;     /* altura do cabeçalho no overlay */
+      --bg-page:   #0f172a;
+      --bg-card:   #1e293b;
+      --neon:      #38bdf8;
+      --neon-glow: rgba(56, 189, 248, 0.45);
+      --text-main: #e2e8f0;
+      --text-muted:#94a3b8;
+      --header-h:  60px;
     }
 
     body {
@@ -34,64 +25,23 @@
       min-height: 100vh;
     }
 
-    /* =============================================
-       CABEÇALHO PRINCIPAL
-    ============================================= */
-    header {
-      text-align: center;
-      padding: 2.5rem 1rem 1rem;
-    }
+    /* CABEÇALHO */
+    header { text-align: center; padding: 2.5rem 1rem 1rem; }
+    header .logo { font-size: 1.1rem; letter-spacing: .25em; text-transform: uppercase; color: var(--neon); opacity: .7; }
+    header h1 { font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 700; margin: .4rem 0 .6rem; }
+    header p { font-size: .9rem; color: var(--text-muted); }
 
-    header .logo {
-      font-size: 1.1rem;
-      letter-spacing: .25em;
-      text-transform: uppercase;
-      color: var(--neon);
-      opacity: .7;
-    }
-
-    header h1 {
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      font-weight: 700;
-      margin: .4rem 0 .6rem;
-    }
-
-    header p {
-      font-size: .9rem;
-      color: var(--text-muted);
-    }
-
-    /* =============================================
-       BARRA DE PESQUISA
-    ============================================= */
-    .search-wrap {
-      display: flex;
-      justify-content: center;
-      padding: 1.5rem 1rem .5rem;
-    }
-
+    /* BUSCA */
+    .search-wrap { display: flex; justify-content: center; padding: 1.5rem 1rem .5rem; }
     #search {
-      width: min(400px, 100%);
-      padding: .6rem 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--neon);
-      background: var(--bg-card);
-      color: var(--text-main);
-      font-size: .95rem;
-      outline: none;
-      transition: box-shadow .2s;
+      width: min(400px, 100%); padding: .6rem 1rem; border-radius: 8px;
+      border: 1px solid var(--neon); background: var(--bg-card);
+      color: var(--text-main); font-size: .95rem; outline: none; transition: box-shadow .2s;
     }
-
-    #search:focus {
-      box-shadow: 0 0 0 3px var(--neon-glow);
-    }
-
+    #search:focus { box-shadow: 0 0 0 3px var(--neon-glow); }
     #search::placeholder { color: var(--text-muted); }
 
-    /* =============================================
-       GRADE DE JOGOS (responsiva)
-       Mínimo de 140px por card, máximo auto
-    ============================================= */
+    /* GRADE */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -101,127 +51,46 @@
       margin: 0 auto;
     }
 
-    /* =============================================
-       CARD DE JOGO
-    ============================================= */
+    /* CARD — edite onclick="play('URL')" para trocar o jogo */
     .card {
       background: var(--bg-card);
       border: 1px solid transparent;
       border-radius: 12px;
       padding: 1.4rem .8rem 1.1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: .55rem;
+      display: flex; flex-direction: column; align-items: center; gap: .55rem;
       cursor: pointer;
       transition: border-color .25s, box-shadow .25s, transform .2s;
       user-select: none;
     }
-
-    /* Efeito de brilho neon ao passar o mouse */
     .card:hover {
       border-color: var(--neon);
       box-shadow: 0 0 16px var(--neon-glow), 0 0 40px rgba(56,189,248,.15);
       transform: translateY(-4px);
     }
-
-    .card:active {
-      transform: translateY(-2px);
-    }
-
-    .card .emoji {
-      font-size: 2.8rem;
-      line-height: 1;
-    }
-
-    .card .title {
-      font-size: .82rem;
-      font-weight: 600;
-      text-align: center;
-      color: var(--text-main);
-    }
-
-    /* Card visualmente escondido (filtro de busca) */
+    .card:active { transform: translateY(-2px); }
+    .card .emoji { font-size: 2.8rem; line-height: 1; }
+    .card .title { font-size: .82rem; font-weight: 600; text-align: center; }
     .card[hidden] { display: none; }
 
-    /* Mensagem "nenhum resultado" */
-    .no-results {
-      grid-column: 1 / -1;
-      text-align: center;
-      color: var(--text-muted);
-      padding: 2rem 0;
-      display: none;
-    }
+    .no-results { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem 0; display: none; }
 
-    /* =============================================
-       OVERLAY DO JOGO (iframe tela cheia)
-    ============================================= */
-    #overlay {
-      display: none;          /* escondido por padrão */
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      flex-direction: column;
-      background: #000;
-    }
-
-    /* Quando um jogo está aberto o overlay fica visível */
-    #overlay.active {
-      display: flex;
-    }
-
-    /* Barra superior do overlay */
+    /* OVERLAY */
+    #overlay { display: none; position: fixed; inset: 0; z-index: 9999; flex-direction: column; background: #000; }
+    #overlay.active { display: flex; }
     #overlay-bar {
-      height: var(--header-h);
-      background: #0d1117;
-      border-bottom: 1px solid var(--neon);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1rem;
-      flex-shrink: 0;
+      height: var(--header-h); background: #0d1117; border-bottom: 1px solid var(--neon);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 1rem; flex-shrink: 0;
     }
-
-    #overlay-bar .game-name {
-      font-size: .95rem;
-      font-weight: 600;
-      color: var(--neon);
-    }
-
-    /* Botão "← Voltar ao Menu" */
+    #overlay-bar .game-name { font-size: .95rem; font-weight: 600; color: var(--neon); }
     #btn-back {
-      background: transparent;
-      border: 1px solid var(--neon);
-      color: var(--neon);
-      padding: .35rem .9rem;
-      border-radius: 6px;
-      font-size: .85rem;
-      cursor: pointer;
+      background: transparent; border: 1px solid var(--neon); color: var(--neon);
+      padding: .35rem .9rem; border-radius: 6px; font-size: .85rem; cursor: pointer;
       transition: background .2s, box-shadow .2s;
     }
+    #btn-back:hover { background: var(--neon-glow); box-shadow: 0 0 8px var(--neon-glow); }
+    #game-frame { flex: 1; width: 100%; border: none; }
 
-    #btn-back:hover {
-      background: var(--neon-glow);
-      box-shadow: 0 0 8px var(--neon-glow);
-    }
-
-    /* O iframe ocupa todo o espaço restante abaixo da barra */
-    #game-frame {
-      flex: 1;
-      width: 100%;
-      border: none;
-    }
-
-    /* =============================================
-       FOOTER
-    ============================================= */
-    footer {
-      text-align: center;
-      padding: 1rem;
-      font-size: .75rem;
-      color: var(--text-muted);
-      border-top: 1px solid #1e293b;
-    }
+    footer { text-align: center; padding: 1rem; font-size: .75rem; color: var(--text-muted); border-top: 1px solid #1e293b; }
   </style>
 </head>
 <body>
@@ -232,352 +101,159 @@
     <p>Selecione um jogo e divirta-se</p>
   </header>
 
-  <!-- Caixa de pesquisa -->
   <div class="search-wrap">
-    <input
-      id="search"
-      type="search"
-      placeholder="Pesquisar recurso..."
-      autocomplete="off"
-      aria-label="Pesquisar jogo"
-    />
+    <input id="search" type="search" placeholder="Pesquisar jogo..." autocomplete="off" aria-label="Pesquisar jogo" />
   </div>
 
   <!-- =============================================
        GRADE DE JOGOS
-       Para adicionar um jogo, copie um bloco .card
-       e preencha: data-title, data-url, emoji e título
+       Para adicionar: copie um .card e edite:
+         onclick="play('URL_DO_JOGO')"
+         data-title="Nome do Jogo"
+         emoji e .title
   ============================================= -->
   <main class="grid" id="grid">
 
     <!-- JOGO 1 — Minecraft -->
-    <div
-      class="card"
-      data-title="Minecraft"
-      data-url="https://eaglercraft.com/mc/1.8.8/"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Minecraft"
-    >
+    <div class="card" onclick="play('https://eaglercraft.com/mc/1.8.8/', 'Minecraft')" data-title="Minecraft">
       <span class="emoji">⛏️</span>
       <span class="title">Minecraft</span>
     </div>
 
     <!-- JOGO 2 — Among Us -->
-    <div
-      class="card"
-      data-title="Among Us"
-      data-url="https://www.miniplay.com/embed/among-us-online"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Among Us"
-    >
+    <div class="card" onclick="play('https://www.miniplay.com/embed/among-us-online', 'Among Us')" data-title="Among Us">
       <span class="emoji">🚀</span>
       <span class="title">Among Us</span>
     </div>
 
     <!-- JOGO 3 — Venge.io -->
-    <div
-      class="card"
-      data-title="Venge.io"
-      data-url="https://venge.io"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Venge.io"
-    >
+    <div class="card" onclick="play('https://venge.io', 'Venge.io')" data-title="Venge.io">
       <span class="emoji">🎯</span>
       <span class="title">Venge.io</span>
     </div>
 
     <!-- JOGO 4 — 1v1.LOL -->
-    <div
-      class="card"
-      data-title="1v1.LOL"
-      data-url="https://1v1.lol"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir 1v1.LOL"
-    >
+    <div class="card" onclick="play('https://1v1.lol', '1v1.LOL')" data-title="1v1.LOL">
       <span class="emoji">🏗️</span>
       <span class="title">1v1.LOL</span>
     </div>
 
     <!-- JOGO 5 — Retro Bowl -->
-    <div
-      class="card"
-      data-title="Retro Bowl"
-      data-url="https://retrobowl.me"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Retro Bowl"
-    >
+    <div class="card" onclick="play('https://ozogames.com/uploads/games/html5/G/granny%20unblocked%20game/index.html', 'Granny')" data-title="Retro Bowl">
       <span class="emoji">🏈</span>
-      <span class="title">Retro Bowl</span>
+      <span class="title">Granny</span>
     </div>
 
     <!-- JOGO 6 — Slope -->
-    <!-- URL: jogo de bola descendo rampa infinita -->
-    <div
-      class="card"
-      data-title="Slope"
-      data-url="https://slope-game.com"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Slope"
-    >
+    <div class="card" onclick="play('https://slope-game.com', 'Slope')" data-title="Slope">
       <span class="emoji">🎳</span>
       <span class="title">Slope</span>
     </div>
 
     <!-- JOGO 7 — Shell Shockers -->
-    <!-- URL: shooter de ovos multiplayer -->
-    <div
-      class="card"
-      data-title="Shell Shockers"
-      data-url="https://shellshock.io"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Shell Shockers"
-    >
+    <div class="card" onclick="play('https://shellshock.io', 'Shell Shockers')" data-title="Shell Shockers">
       <span class="emoji">🥚</span>
       <span class="title">Shell Shockers</span>
     </div>
 
     <!-- JOGO 8 — Krunker.io -->
-    <!-- URL: FPS browser multiplayer -->
-    <div
-      class="card"
-      data-title="Krunker.io"
-      data-url="https://krunker.io"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Krunker.io"
-    >
+    <div class="card" onclick="play('https://krunker.io', 'Krunker.io')" data-title="Krunker.io">
       <span class="emoji">🔫</span>
       <span class="title">Krunker.io</span>
     </div>
 
     <!-- JOGO 9 — Agar.io -->
-    <!-- URL: jogo de comer células multiplayer -->
-    <div
-      class="card"
-      data-title="Agar.io"
-      data-url="https://agar.io"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Agar.io"
-    >
+    <div class="card" onclick="play('https://agar.io', 'Agar.io')" data-title="Agar.io">
       <span class="emoji">🟢</span>
       <span class="title">Agar.io</span>
     </div>
 
     <!-- JOGO 10 — Slither.io -->
-    <!-- URL: jogo da cobrinha multiplayer -->
-    <div
-      class="card"
-      data-title="Slither.io"
-      data-url="https://slither.io"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Slither.io"
-    >
+    <div class="card" onclick="play('https://slither.io', 'Slither.io')" data-title="Slither.io">
       <span class="emoji">🐍</span>
       <span class="title">Slither.io</span>
     </div>
 
     <!-- JOGO 11 — Zombs Royale -->
-    <!-- URL: battle royale 2D top-down -->
-    <div
-      class="card"
-      data-title="Zombs Royale"
-      data-url="https://zombsroyale.io"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Zombs Royale"
-    >
+    <div class="card" onclick="play('https://zombsroyale.io', 'Zombs Royale')" data-title="Zombs Royale">
       <span class="emoji">🧟</span>
       <span class="title">Zombs Royale</span>
     </div>
 
     <!-- JOGO 12 — Paper.io 2 -->
-    <!-- URL: conquiste território em 2D -->
-    <div
-      class="card"
-      data-title="Paper.io 2"
-      data-url="https://paper-io.com"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Paper.io 2"
-    >
+    <div class="card" onclick="play('https://paper-io.com', 'Paper.io 2')" data-title="Paper.io 2">
       <span class="emoji">📄</span>
       <span class="title">Paper.io 2</span>
     </div>
 
     <!-- JOGO 13 — Surviv.io -->
-    <!-- URL: battle royale 2D top-down clássico -->
-    <div
-      class="card"
-      data-title="Surviv.io"
-      data-url="https://surviv.io"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Surviv.io"
-    >
+    <div class="card" onclick="play('https://surviv.io', 'Surviv.io')" data-title="Surviv.io">
       <span class="emoji">🪖</span>
       <span class="title">Surviv.io</span>
     </div>
 
     <!-- JOGO 14 — Diep.io -->
-    <!-- URL: tanques evoluindo multiplayer -->
-    <div
-      class="card"
-      data-title="Diep.io"
-      data-url="https://diep.io"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Diep.io"
-    >
+    <div class="card" onclick="play('https://diep.io', 'Diep.io')" data-title="Diep.io">
       <span class="emoji">🔵</span>
       <span class="title">Diep.io</span>
     </div>
 
     <!-- JOGO 15 — Wormate.io -->
-    <!-- URL: cobra come doces multiplayer -->
-    <div
-      class="card"
-      data-title="Wormate.io"
-      data-url="https://wormate.io"
-      role="button"
-      tabindex="0"
-      aria-label="Abrir Wormate.io"
-    >
+    <div class="card" onclick="play('https://wormate.io', 'Wormate.io')" data-title="Wormate.io">
       <span class="emoji">🍭</span>
       <span class="title">Wormate.io</span>
     </div>
 
-    <!-- Mensagem de "sem resultados" para o filtro de busca -->
-    <p class="no-results" id="no-results">Nenhum recurso encontrado.</p>
-
+    <p class="no-results" id="no-results">Nenhum jogo encontrado.</p>
   </main>
 
-  <!-- =============================================
-       OVERLAY DO JOGO (tela cheia com iframe)
-       O jogo abre aqui ao clicar em um card
-  ============================================= -->
+  <!-- OVERLAY -->
   <div id="overlay" role="dialog" aria-modal="true" aria-label="Janela do jogo">
-
-    <!-- Barra superior -->
     <div id="overlay-bar">
       <span class="game-name" id="overlay-title">Jogo</span>
       <button id="btn-back" aria-label="Voltar ao menu">← Voltar ao Menu</button>
     </div>
-
-    <!-- Iframe onde o jogo é carregado -->
-    <iframe
-      id="game-frame"
-      src="about:blank"
-      title="Jogo"
-      allow="fullscreen; autoplay"
-      allowfullscreen
-    ></iframe>
-
+    <iframe id="game-frame" src="about:blank" title="Jogo" allow="fullscreen; autoplay" allowfullscreen></iframe>
   </div>
 
-  <!-- =============================================
-       FOOTER
-  ============================================= -->
-  <footer>
-    &copy; 2024 Game Portal
-  </footer>
+  <footer>&copy; 2024 Game Portal</footer>
 
-  <!-- =============================================
-       JAVASCRIPT
-  ============================================= -->
   <script>
-    /* -----------------------------------------------
-       ELEMENTOS DO DOM
-    ----------------------------------------------- */
-    const overlay     = document.getElementById('overlay');
-    const gameFrame   = document.getElementById('game-frame');
+    const overlay      = document.getElementById('overlay');
+    const gameFrame    = document.getElementById('game-frame');
     const overlayTitle = document.getElementById('overlay-title');
-    const btnBack     = document.getElementById('btn-back');
-    const searchInput = document.getElementById('search');
-    const cards       = document.querySelectorAll('.card');
-    const noResults   = document.getElementById('no-results');
+    const searchInput  = document.getElementById('search');
+    const noResults    = document.getElementById('no-results');
 
-    /* -----------------------------------------------
-       ABRIR JOGO
-       Recebe o elemento .card clicado,
-       preenche o iframe e exibe o overlay
-    ----------------------------------------------- */
-    function openGame(card) {
-      const url   = card.dataset.url;
-      const title = card.dataset.title;
-
-      overlayTitle.textContent = title;    // mostra o nome do jogo na barra
-      gameFrame.src = url;                 // carrega o jogo no iframe
-
-      overlay.classList.add('active');     // exibe o overlay
-
-      /* Trava o scroll da página principal enquanto o jogo está aberto */
+    /* Função global chamada pelo onclick de cada card */
+    function play(url, title) {
+      overlayTitle.textContent = title;
+      gameFrame.src = url;
+      overlay.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
 
-    /* -----------------------------------------------
-       FECHAR JOGO
-       Remove o iframe e reabilita o scroll
-    ----------------------------------------------- */
+    /* Fechar overlay */
     function closeGame() {
-      overlay.classList.remove('active'); // esconde o overlay
-      gameFrame.src = 'about:blank';      // descarrega o jogo (libera memória)
-      document.body.style.overflow = '';  // restaura o scroll
+      overlay.classList.remove('active');
+      gameFrame.src = 'about:blank';
+      document.body.style.overflow = '';
     }
 
-    /* -----------------------------------------------
-       EVENTOS DOS CARDS
-       Suporte a clique e teclado (Enter/Espaço)
-       para acessibilidade
-    ----------------------------------------------- */
-    cards.forEach(card => {
-      card.addEventListener('click', () => openGame(card));
-
-      card.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openGame(card);
-        }
-      });
-    });
-
-    /* Botão de voltar ao menu */
-    btnBack.addEventListener('click', closeGame);
-
-    /* Fechar com a tecla Escape */
+    document.getElementById('btn-back').addEventListener('click', closeGame);
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && overlay.classList.contains('active')) {
-        closeGame();
-      }
+      if (e.key === 'Escape' && overlay.classList.contains('active')) closeGame();
     });
 
-    /* -----------------------------------------------
-       FILTRO DE BUSCA
-       Oculta cards cujo título não bate com o texto
-    ----------------------------------------------- */
+    /* Filtro de busca pelo data-title */
     searchInput.addEventListener('input', () => {
-      const query = searchInput.value.trim().toLowerCase();
+      const q = searchInput.value.trim().toLowerCase();
       let visible = 0;
-
-      cards.forEach(card => {
-        const title = card.dataset.title.toLowerCase();
-        if (title.includes(query)) {
-          card.removeAttribute('hidden');
-          visible++;
-        } else {
-          card.setAttribute('hidden', '');
-        }
+      document.querySelectorAll('.card').forEach(card => {
+        const match = card.dataset.title.toLowerCase().includes(q);
+        card.toggleAttribute('hidden', !match);
+        if (match) visible++;
       });
-
-      /* Mostra a mensagem de "sem resultados" se necessário */
       noResults.style.display = visible === 0 ? 'block' : 'none';
     });
   </script>
